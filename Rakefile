@@ -5,7 +5,8 @@ require 'bubble-wrap'
 
 Motion::Project::App.setup do |app|
   app.name = 'Cramplire'
-  app.files_dependencies  'app/message.rb' => 'app/model.rb',
-                          'app/user.rb'    => 'app/model.rb',
-                          'app/room.rb'    => 'app/model.rb'
+  app.files_dependencies  'app/message.rb'  => 'app/model.rb',
+                          'app/user.rb'     => 'app/model.rb',
+                          'app/room.rb'     => 'app/model.rb',
+                          'app/campfire.rb' => 'app/model.rb'
 end
