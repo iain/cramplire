@@ -4,4 +4,4 @@ class Model
       send "#{key}=", value
     end
   end
-end  
+end
