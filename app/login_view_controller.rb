@@ -1,12 +1,11 @@
 class LoginViewController < UIViewController
 
-  attr_accessor :delegate
+  attr_accessor :delegate, :campfire
 
   def viewDidLoad
     self.navigationItem.title = "Sign in"
 
-    button = UIBarButtonItem.alloc.initWithTitle("Sign in", style:UIBarButtonItemStyleDone, target: self, action: :handle_sign_in_pressed)
-    navigationItem.rightBarButtonItem = button
+    navigationItem.rightBarButtonItem = sign_in_button
 
     view.backgroundColor = UIColor.groupTableViewBackgroundColor
 
@@ -16,14 +15,20 @@ class LoginViewController < UIViewController
   end
 
   def handle_sign_in_pressed
-    campfire.login
+    campfire.subdomain = subdomain_text_field.text
+    campfire.username  = username_text_field.text
+    campfire.password  = password_text_field.text
+
+    campfire.get_api_token(self)
   end
 
-  def campfire_login(valid)
+  def sign_in_button
+    @sign_in_button ||= UIBarButtonItem.alloc.initWithTitle("Sign in", style:UIBarButtonItemStyleDone, target: self, action: :handle_sign_in_pressed)
+  end
+
+  def campfire_got_api_token(valid)
     if valid
-      #delegate.signed_in(campfire)
-      puts valid
-      puts campfire.token
+      delegate.signed_in
     else
       App.alert("Cannot log in")
     end
@@ -39,15 +44,6 @@ class LoginViewController < UIViewController
   end
 
   private
-
-  def campfire
-    @campfire ||= Campfire.new(
-      :subdomain => subdomain_text_field.text,
-      :username  => username_text_field.text,
-      :password  => password_text_field.text,
-      :delegate  => self
-    )
-  end
 
   def username_text_field
     @username_text_field ||= default_text_field [[10, 50], [view.size.width - 20, 31]] do |f|
