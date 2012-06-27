@@ -10,7 +10,13 @@ class AppDelegate
   end
 
   def signed_in
-    nav_controller.pushViewController(messages_controller, animated: true)
+    nav_controller.pushViewController(rooms_view_controller, animated: true)
+  end
+
+  def room_chosen(room)
+    campfire.room_id = room.id
+
+    nav_controller.pushViewController(messages_view_controller, animated: true)
   end
 
   private
@@ -23,17 +29,24 @@ class AppDelegate
     @campfire ||= Campfire.new(room_id: '')
   end
 
-  def messages_controller
-    @messages_controller ||= MessagesViewController.alloc.init.tap do |m|
-      m.delegate  = self
-      m.campfire  = campfire
+  def messages_view_controller
+    @messages_view_controller ||= MessagesViewController.alloc.init.tap do |t|
+      t.delegate  = self
+      t.campfire  = campfire
+    end
+  end
+
+  def rooms_view_controller
+    @rooms_view_controller ||= RoomsViewController.alloc.init.tap do |t|
+      t.delegate  = self
+      t.campfire  = campfire
     end
   end
 
   def login_view_controller
-    @login_view_controller ||= LoginViewController.alloc.init.tap do |l|
-      l.delegate  = self
-      l.campfire  = campfire
+    @login_view_controller ||= LoginViewController.alloc.init.tap do |t|
+      t.delegate  = self
+      t.campfire  = campfire
     end
   end
 

@@ -5,9 +5,6 @@ class MessagesViewController < UIViewController
   def viewDidLoad
     self.navigationItem.title = "Fixalist"
 
-    table.delegate    = self
-    table.dataSource  = self
-
     view.addSubview(label)
     view.addSubview(table)
 
@@ -27,18 +24,18 @@ class MessagesViewController < UIViewController
   end
 
   # callback
-  def tableView(table_view, numberOfRowsInSection:section)
+  def tableView(table, numberOfRowsInSection:section)
     campfire.messages.size
   end
 
   # callback
-  def tableView(table_view, cellForRowAtIndexPath:indexPath)
+  def tableView(table, cellForRowAtIndexPath:indexPath)
     message = campfire.messages[indexPath.row]
     MessageCell.cellForMessage(message, inTableView: table)
   end
 
   # callback
-  def tableView(tableView, heightForRowAtIndexPath:indexPath)
+  def tableView(table, heightForRowAtIndexPath:indexPath)
     100
   end
 
@@ -52,16 +49,16 @@ class MessagesViewController < UIViewController
   end
 
   def label
-    @label ||= UITextView.alloc.initWithFrame(CGRectMake(0, 0, view.size.width, 50)).tap do |l|
-      l.delegate    = self
-      l.text        = 'Type your message'
+    @label ||= UITextView.alloc.initWithFrame(CGRectMake(0, 0, view.size.width, 50)).tap do |t|
+      t.delegate    = self
+      t.text        = 'Type your message'
     end
   end
 
   def table
-    @table ||= UITableView.alloc.initWithFrame([[0, 50], [view.size.width, view.size.height - 50]], style: UITableViewStylePlain) do |t|
+    @table ||= UITableView.alloc.initWithFrame([[0, 50], [view.size.width, view.size.height - 50]], style: UITableViewStylePlain).tap do |t|
       t.delegate    = self
-      t.dataSource  = data_source
+      t.dataSource  = self
     end
   end
 

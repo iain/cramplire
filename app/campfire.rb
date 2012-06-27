@@ -1,7 +1,8 @@
 class Campfire < Model
 
   attr_accessor :subdomain, :username, :password,
-                :api_token, :users, :messages, :room_id
+                :api_token, :users, :messages, :room_id,
+                :rooms
 
   def users
     @users ||= []
@@ -9,6 +10,10 @@ class Campfire < Model
 
   def messages
     @messages ||= []
+  end
+
+  def rooms
+    @rooms ||= []
   end
 
   def get_api_token(delegate)
@@ -40,6 +45,15 @@ class Campfire < Model
     end
   end
 
+  def get_rooms(delegate)
+    get_response(url_with_token("rooms.json")) do |response, data|
+      if response.ok?
+        self.rooms = build_rooms(data['rooms'])
+        delegate.campfire_got_rooms
+      end
+    end
+  end
+
   private
 
   def build_messages(data)
@@ -50,6 +64,12 @@ class Campfire < Model
         message
       end
     end.compact
+  end
+
+  def build_rooms(data)
+    data.map do |hash|
+      Room.new(hash)
+    end
   end
 
   def get_response(url, &block)
