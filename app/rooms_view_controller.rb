@@ -3,9 +3,11 @@ class RoomsViewController < UIViewController
   attr_accessor :campfire, :delegate
 
   def viewDidLoad
-    self.navigationItem.title = 'Choose room'
     view.addSubview(table)
+  end
 
+  def viewWillAppear(animated)
+    self.navigationItem.title = 'Choose room'
     campfire.get_rooms(self)
   end
 

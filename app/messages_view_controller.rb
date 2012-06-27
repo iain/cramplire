@@ -3,11 +3,12 @@ class MessagesViewController < UIViewController
   attr_accessor :campfire, :delegate
 
   def viewDidLoad
-    self.navigationItem.title = "Fixalist"
-
     view.addSubview(label)
     view.addSubview(table)
+  end
 
+  def viewWillAppear(animated)
+    self.navigationItem.title = "Fixalist"
     campfire.get_users(self)
   end
 
