@@ -1,8 +1,6 @@
 class Campfire < Model
 
-  attr_accessor :subdomain, :username, :password,
-                :api_token, :users, :messages, :room_id,
-                :rooms
+  attr_accessor :username, :password, :users, :messages, :room_id, :rooms
 
   def users
     @users ||= []
@@ -16,6 +14,12 @@ class Campfire < Model
     @rooms ||= []
   end
 
+  def signed_in?
+    puts api_token.inspect
+    puts subdomain.inspect
+    api_token && subdomain
+  end
+
   def get_api_token(delegate)
     get_response("https://#{username}:#{password}@#{subdomain}.campfirenow.com/users/me.json") do |response, data|
       if response.status_code.to_s == '200'
@@ -25,6 +29,22 @@ class Campfire < Model
         delegate.campfire_got_api_token(false)
       end
     end
+  end
+
+  def api_token
+    @api_token ||= get(:api_token)
+  end
+
+  def api_token=(token)
+    @api_token = set(:api_token, token)
+  end
+
+  def subdomain
+    @subdomain ||= get(:subdomain)
+  end
+
+  def subdomain=(subdomain)
+    @subdomain = set(:subdomain, subdomain)
   end
 
   def get_users(delegate)
@@ -92,6 +112,17 @@ class Campfire < Model
 
   def url_with_token(path)
     "https://#{api_token}:X@#{subdomain}.campfirenow.com/#{path}"
+  end
+
+  def get(field)
+    value = App.user_cache.stringForKey(field.to_s)
+    value = nil if value == ""
+    value
+  end
+
+  def set(field, value)
+    App.user_cache.setObject(value, forKey: field.to_s)
+    value
   end
 
 end

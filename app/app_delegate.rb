@@ -22,7 +22,7 @@ class AppDelegate
   private
 
   def nav_controller
-    @nav_controller ||= UINavigationController.alloc.initWithRootViewController(login_view_controller)
+    @nav_controller ||= UINavigationController.alloc.initWithRootViewController(first_controller)
   end
 
   def campfire
@@ -47,6 +47,14 @@ class AppDelegate
     @login_view_controller ||= LoginViewController.alloc.init.tap do |t|
       t.delegate  = self
       t.campfire  = campfire
+    end
+  end
+
+  def first_controller
+    if campfire.signed_in?
+      rooms_view_controller
+    else
+      login_view_controller
     end
   end
 
