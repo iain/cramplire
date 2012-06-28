@@ -41,6 +41,12 @@ class MessagesViewController < UIViewController
   end
 
   # callback
+  def textFieldShouldReturn(label)
+    campfire.say(label.text)
+    label.text = ''
+  end
+
+  # callback
   def reloadRowForMessage(message)
     row = campfire.messages.index(message)
 
@@ -50,9 +56,12 @@ class MessagesViewController < UIViewController
   end
 
   def label
-    @label ||= UITextView.alloc.initWithFrame(CGRectMake(0, 0, view.size.width, 50)).tap do |t|
-      t.delegate    = self
-      t.text        = 'Type your message'
+    @label ||= UITextField.alloc.initWithFrame(CGRectMake(0, 0, view.size.width, 50)).tap do |t|
+      t.delegate        = self
+      t.placeholder     = 'Type your message'
+      t.borderStyle     = UITextBorderStyleRoundedRect
+      t.backgroundColor = UIColor.whiteColor
+      t.font            = UIFont.systemFontOfSize(12)
     end
   end
 

@@ -54,6 +54,11 @@ class Campfire < Model
     end
   end
 
+  def say(message)
+    data = BubbleWrap::JSON.generate({ message: { body: message }})
+    BubbleWrap::HTTP.post(url_with_token("room/#{room_id}/speak.json"), payload: data, headers: { 'Content-Type' => 'application/json'})
+  end
+
   private
 
   def build_messages(data)
