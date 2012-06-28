@@ -44,6 +44,7 @@ class MessagesViewController < UIViewController
   def textFieldShouldReturn(label)
     campfire.say(label.text)
     label.text = ''
+    label.resignFirstResponder
   end
 
   # callback
