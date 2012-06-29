@@ -21,7 +21,6 @@ class Campfire < Model
   def get_api_token(delegate)
     get_response("https://#{username}:#{password}@#{subdomain}.campfirenow.com/users/me.json") do |response, data|
       if response.status_code.to_s == '200'
-        p data
         self.api_token = data['user']['api_auth_token']
         self.user_id = data['user']['id']
         delegate.campfire_got_api_token(true)
