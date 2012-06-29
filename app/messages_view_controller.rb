@@ -9,18 +9,23 @@ class MessagesViewController < UIViewController
   end
 
   def viewWillAppear(animated)
-    self.setToolbarItems([refresh_button], animated: true)
     self.navigationItem.title = "Fixalist"
     campfire.get_users(self)
+    timer
   end
 
-  def refresh_button
-    @refresh_button ||= UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemRefresh, target: self, action: "refresh_messages")
+  def viewWillDisappear(animated)
+    cancel_timer
   end
 
-  # callback
-  def refresh_messages
-    campfire.get_users(self)
+  def timer
+    @timer ||= BubbleWrap::Reactor.add_periodic_timer 1.0 do
+      campfire.get_users(self)
+    end
+  end
+
+  def cancel_timer
+    BubbleWrap::Reactor.cancel_timer(timer)
   end
 
   # callback
@@ -29,9 +34,9 @@ class MessagesViewController < UIViewController
   end
 
   # callback
-  def campfire_got_messages
+  def campfire_got_messages(animated = false)
     table.reloadData
-    scroll_to_bottom
+    scroll_to_bottom(animated)
   end
 
   def scroll_to_bottom(animated = false)
@@ -96,7 +101,7 @@ class MessagesViewController < UIViewController
   end
 
   def table_height
-    view.size.height - 137
+    view.size.height - 93
   end
 
   def input_top
@@ -106,7 +111,7 @@ class MessagesViewController < UIViewController
   KEYBOARD_ANIMATION_DURATION = 0.3
   MINIMUM_SCROLL_FRACTION     = 0.2
   MAXIMUM_SCROLL_FRACTION     = 0.8
-  PORTRAIT_KEYBOARD_HEIGHT    = 216
+  PORTRAIT_KEYBOARD_HEIGHT    = 263
   LANDSCAPE_KEYBOARD_HEIGHT   = 162
 
   def textFieldDidBeginEditing(textField)

@@ -7,7 +7,7 @@ class LoginViewController < UIViewController
 
     navigationItem.rightBarButtonItem = sign_in_button
 
-    view.backgroundColor = UIColor.groupTableViewBackgroundColor
+    view.backgroundColor = UIColor.scrollViewTexturedBackgroundColor
 
     view.addSubview username_text_field
     view.addSubview password_text_field

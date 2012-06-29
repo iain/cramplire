@@ -15,13 +15,15 @@ class Campfire < Model
   end
 
   def signed_in?
-    api_token && subdomain
+    api_token && subdomain && user_id
   end
 
   def get_api_token(delegate)
     get_response("https://#{username}:#{password}@#{subdomain}.campfirenow.com/users/me.json") do |response, data|
       if response.status_code.to_s == '200'
+        p data
         self.api_token = data['user']['api_auth_token']
+        self.user_id = data['user']['id']
         delegate.campfire_got_api_token(true)
       else
         delegate.campfire_got_api_token(false)
@@ -45,6 +47,14 @@ class Campfire < Model
     @subdomain = set(:subdomain, subdomain)
   end
 
+  def user_id
+    @user_id ||= get(:user_id)
+  end
+
+  def user_id=(id)
+    @user_id = set(:user_id, id)
+  end
+
   def get_users(delegate)
     get_response(url_with_token("room/#{room_id}.json")) do |response, data|
       if response.ok?
@@ -63,7 +73,9 @@ class Campfire < Model
           existing_message_ids.include?(m.id)
         end
         self.messages += new_messages
-        delegate.campfire_got_messages
+        if new_messages.any?
+          delegate.campfire_got_messages(existing_message_ids.any?)
+        end
       end
     end
   end
@@ -89,6 +101,7 @@ class Campfire < Model
       if hash['type'] == 'TextMessage'
         message = Message.new(hash)
         message.user = users.find { |user| user.id == message.user_id }
+        message.by_me = (self.user_id.to_s == message.user_id.to_s)
         message
       end
     end.compact

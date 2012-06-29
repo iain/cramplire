@@ -1,6 +1,6 @@
 class Message < Model
 
-  attr_accessor :id, :user_id, :type, :created_at, :starred, :body, :room_id, :user
+  attr_accessor :id, :user_id, :type, :created_at, :starred, :body, :room_id, :user, :by_me
 
   def user_name
     if user

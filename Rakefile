@@ -2,6 +2,7 @@
 $:.unshift("/Library/RubyMotion/lib")
 require 'motion/project'
 require 'bubble-wrap'
+require 'bubble-wrap/reactor'
 
 Motion::Project::App.setup do |app|
   app.name = 'Cramplire'

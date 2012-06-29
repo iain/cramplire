@@ -22,9 +22,7 @@ class AppDelegate
   private
 
   def nav_controller
-    @nav_controller ||= UINavigationController.alloc.initWithRootViewController(first_controller).tap do |n|
-      n.toolbarHidden = false
-    end
+    @nav_controller ||= UINavigationController.alloc.initWithRootViewController(first_controller)
   end
 
   def campfire
