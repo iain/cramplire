@@ -9,6 +9,7 @@ class RoomCell < UITableViewCell
   end
 
   def fillWithRoom(room, inTableView:tableView)
+    self.selectionStyle = UITableViewCellSelectionStyleGray
     self.textLabel.text = room.name
     self.detailTextLabel.text = room.topic
   end

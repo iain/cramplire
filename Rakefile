@@ -9,4 +9,6 @@ Motion::Project::App.setup do |app|
                           'app/user.rb'     => 'app/model.rb',
                           'app/room.rb'     => 'app/model.rb',
                           'app/campfire.rb' => 'app/model.rb'
+
+  app.device_family = :ipad
 end

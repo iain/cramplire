@@ -15,8 +15,6 @@ class Campfire < Model
   end
 
   def signed_in?
-    puts api_token.inspect
-    puts subdomain.inspect
     api_token && subdomain
   end
 
@@ -59,7 +57,12 @@ class Campfire < Model
   def get_messages(delegate)
     get_response(url_with_token("room/#{room_id}/recent.json")) do |response, data|
       if response.ok?
-        self.messages = build_messages(data['messages'])
+        all_received_messages = build_messages(data['messages'])
+        existing_message_ids = messages.map(&:id)
+        new_messages = all_received_messages.reject do |m|
+          existing_message_ids.include?(m.id)
+        end
+        self.messages += new_messages
         delegate.campfire_got_messages
       end
     end
@@ -98,8 +101,6 @@ class Campfire < Model
   end
 
   def get_response(url, &block)
-    puts "Getting #{url}..."
-
     BubbleWrap::HTTP.get(url) do |response|
       if response.ok?
         data = BubbleWrap::JSON.parse(response.body.to_str)

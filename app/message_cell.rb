@@ -8,6 +8,7 @@ class MessageCell < UITableViewCell
   end
 
   def fillWithMessage(message, inTableView:tableView)
+    self.selectionStyle = UITableViewCellSelectionStyleGray
     self.textLabel.text = "#{message.user_name} said:"
     self.detailTextLabel.text = "#{message.body}"
 
@@ -36,6 +37,12 @@ class MessageCell < UITableViewCell
       self.textLabel.font = UIFont.systemFontOfSize(MessageFontSize)
     end
     self
+  end
+
+  def self.height(message, width)
+    constrain = CGSize.new(width - 57, 1000)
+    size = message.body.sizeWithFont(UIFont.systemFontOfSize(MessageFontSize), constrainedToSize:constrain)
+    [70, size.height + 18].max
   end
 
 end

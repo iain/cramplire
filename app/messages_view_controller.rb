@@ -3,12 +3,23 @@ class MessagesViewController < UIViewController
   attr_accessor :campfire, :delegate
 
   def viewDidLoad
-    view.addSubview(label)
+    view.backgroundColor = UIColor.scrollViewTexturedBackgroundColor
+    view.addSubview(input)
     view.addSubview(table)
   end
 
   def viewWillAppear(animated)
+    self.setToolbarItems([refresh_button], animated: true)
     self.navigationItem.title = "Fixalist"
+    campfire.get_users(self)
+  end
+
+  def refresh_button
+    @refresh_button ||= UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemRefresh, target: self, action: "refresh_messages")
+  end
+
+  # callback
+  def refresh_messages
     campfire.get_users(self)
   end
 
@@ -20,8 +31,12 @@ class MessagesViewController < UIViewController
   # callback
   def campfire_got_messages
     table.reloadData
-    ipath = NSIndexPath.indexPathForRow(campfire.messages.size - 1, inSection: 0)
-    table.scrollToRowAtIndexPath(ipath, atScrollPosition: UITableViewScrollPositionTop, animated: false)
+    scroll_to_bottom
+  end
+
+  def scroll_to_bottom(animated = true)
+    scrollIndexPath = NSIndexPath.indexPathForRow(campfire.messages.size - 1, inSection: 0)
+    table.scrollToRowAtIndexPath(scrollIndexPath, atScrollPosition:UITableViewScrollPositionBottom, animated: animated)
   end
 
   # callback
@@ -37,14 +52,15 @@ class MessagesViewController < UIViewController
 
   # callback
   def tableView(table, heightForRowAtIndexPath:indexPath)
-    100
+    message = campfire.messages[indexPath.row]
+    MessageCell.height(message, table.frame.size.width)
   end
 
   # callback
-  def textFieldShouldReturn(label)
-    campfire.say(label.text)
-    label.text = ''
-    label.resignFirstResponder
+  def textFieldShouldReturn(input)
+    campfire.say(input.text)
+    input.text = ''
+    input.resignFirstResponder
   end
 
   # callback
@@ -56,11 +72,17 @@ class MessagesViewController < UIViewController
     end
   end
 
-  def label
-    @label ||= UITextField.alloc.initWithFrame(CGRectMake(0, 0, view.size.width, 50)).tap do |t|
+  # callback
+  def tableView(tableView, didSelectRowAtIndexPath:indexPath)
+    input.resignFirstResponder
+  end
+
+  def input
+    @input ||= UITextField.alloc.initWithFrame(CGRectMake(10, 10, view.size.width - 20, 31)).tap do |t|
       t.delegate        = self
       t.placeholder     = 'Type your message'
       t.borderStyle     = UITextBorderStyleRoundedRect
+      t.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter
       t.backgroundColor = UIColor.whiteColor
       t.font            = UIFont.systemFontOfSize(12)
     end
