@@ -95,6 +95,8 @@ class Campfire < Model
         self.messages += new_messages
         if new_messages.any?
           delegate.campfire_got_messages(existing_message_ids.any?)
+        else
+          delegate.campfire_no_new_messages
         end
       end
     end

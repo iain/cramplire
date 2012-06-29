@@ -10,22 +10,14 @@ class MessagesViewController < UIViewController
 
   def viewWillAppear(animated)
     self.navigationItem.title = campfire.room_name
-    campfire.get_users(self)
-    timer
+    start_timer 0
   end
 
-  def viewWillDisappear(animated)
-    cancel_timer
-  end
-
-  def timer
-    @timer ||= BubbleWrap::Reactor.add_periodic_timer 1.0 do
+  def start_timer(time = 1.0)
+    puts "#{Time.now} STARTING TIMER"
+    BubbleWrap::Reactor.add_timer time do
       campfire.get_users(self)
     end
-  end
-
-  def cancel_timer
-    BubbleWrap::Reactor.cancel_timer(timer)
   end
 
   # callback
@@ -37,6 +29,12 @@ class MessagesViewController < UIViewController
   def campfire_got_messages(animated = false)
     table.reloadData
     scroll_to_bottom(animated)
+    start_timer
+  end
+
+  # callback
+  def campfire_no_new_messages
+    start_timer
   end
 
   def scroll_to_bottom(animated = false)
