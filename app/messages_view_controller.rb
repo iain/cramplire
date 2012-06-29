@@ -34,7 +34,7 @@ class MessagesViewController < UIViewController
     scroll_to_bottom
   end
 
-  def scroll_to_bottom(animated = true)
+  def scroll_to_bottom(animated = false)
     scrollIndexPath = NSIndexPath.indexPathForRow(campfire.messages.size - 1, inSection: 0)
     table.scrollToRowAtIndexPath(scrollIndexPath, atScrollPosition:UITableViewScrollPositionBottom, animated: animated)
   end

@@ -29,7 +29,7 @@ class RoomsViewController < UIViewController
 
   # callback
   def tableView(tableView, heightForRowAtIndexPath:indexPath)
-    100
+    50
   end
 
   # callback
@@ -38,7 +38,7 @@ class RoomsViewController < UIViewController
   end
 
   def table
-    @table ||= UITableView.alloc.initWithFrame([[0, 0], [view.size.width, view.size.height]], style: UITableViewStylePlain).tap do |t|
+    @table ||= UITableView.alloc.initWithFrame([[0, 0], [view.size.width, view.size.height]], style: UITableViewStyleGrouped).tap do |t|
       t.delegate    = self
       t.dataSource  = self
     end
