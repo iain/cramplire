@@ -9,7 +9,7 @@ class MessagesViewController < UIViewController
   end
 
   def viewWillAppear(animated)
-    self.navigationItem.title = "Fixalist"
+    self.navigationItem.title = campfire.room_name
     campfire.get_users(self)
     timer
   end

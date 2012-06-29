@@ -1,6 +1,6 @@
 class Campfire < Model
 
-  attr_accessor :username, :password, :users, :messages, :room_id, :rooms
+  attr_accessor :username, :password, :users, :messages, :rooms
 
   def users
     @users ||= []
@@ -53,6 +53,27 @@ class Campfire < Model
 
   def user_id=(id)
     @user_id = set(:user_id, id)
+  end
+
+  def room_id
+    @room_id ||= get(:room_id)
+  end
+
+  def room_id=(id)
+    @room_id = set(:room_id, id)
+    self.room_name = rooms.find { |r| r.id.to_s == id.to_s }.name
+  end
+
+  def room_name
+    @room_name ||= get(:room_id)
+  end
+
+  def room_name=(id)
+    @room_name = set(:room_id, id)
+  end
+
+  def room_chosen?
+    room_id && room_name
   end
 
   def get_users(delegate)
